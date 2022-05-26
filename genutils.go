@@ -12,8 +12,8 @@ type DeepError struct {
 	Total    uint
 }
 
-func NewDeepError(text string) *DeepError {
-	return &DeepError{
+func NewDeepError(text string) DeepError {
+	return DeepError{
 		IsErr:    true,
 		Text:     text,
 		Children: make([]DeepError, 0, 1),
