@@ -14,10 +14,9 @@ type DeepError struct {
 
 func NewDeepError(text string) DeepError {
 	return DeepError{
-		IsErr:    true,
-		Text:     text,
-		Children: make([]DeepError, 0, 1),
-		Total:    1,
+		IsErr: true,
+		Text:  text,
+		Total: 1,
 	}
 }
 
@@ -43,6 +42,9 @@ func (e *DeepError) AddChildError(err error) {
 	if err == nil {
 		return
 	}
+	if e.Children == nil {
+		e.Children = make([]DeepError, 0, 1)
+	}
 	e.IsErr = true
 	e.Total += 1
 	e.Children = append(e.Children, NewDeepError(err.Error()))
@@ -51,6 +53,9 @@ func (e *DeepError) AddChildError(err error) {
 func (e *DeepError) AddChildDeepError(err DeepError) {
 	if !err.IsErr {
 		return
+	}
+	if e.Children == nil {
+		e.Children = make([]DeepError, 0, 1)
 	}
 	e.IsErr = true
 	e.Total += err.Total
@@ -65,7 +70,9 @@ func (e *DeepError) BuildError(builder *strings.Builder, depth int) {
 	builder.WriteString("\n")
 	builder.WriteString(tabs)
 	builder.WriteString(e.Text)
-	for _, ec := range e.Children {
-		ec.BuildError(builder, depth+1)
+	if e.Children != nil {
+		for _, ec := range e.Children {
+			ec.BuildError(builder, depth+1)
+		}
 	}
 }
