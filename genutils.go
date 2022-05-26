@@ -66,9 +66,15 @@ func (e *DeepError) BuildError(builder *strings.Builder, depth int) {
 	if !e.IsErr {
 		return
 	}
-	tabs := strings.Repeat("\t", depth)
 	builder.WriteString("\n")
-	builder.WriteString(tabs)
+	d := depth
+	o := d - 1
+	if o > 0 {
+		builder.WriteString(strings.Repeat("  ", o))
+	}
+	if d > 0 {
+		builder.WriteString(" └")
+	}
 	builder.WriteString(e.Text)
 	if e.Children != nil {
 		for _, ec := range e.Children {
